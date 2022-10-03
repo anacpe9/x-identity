@@ -23,13 +23,13 @@ describe('InitialDataService', () => {
     if (mongod) await mongod.stop();
   });
 
-  // afterEach(async () => {
-  //   const collections = mongoConnection.collections;
-  //   for (const key in collections) {
-  //     const collection = collections[key];
-  //     await collection.deleteMany({});
-  //   }
-  // });
+  afterEach(async () => {
+    const collections = mongoConnection.collections;
+    for (const key in collections) {
+      const collection = collections[key];
+      await collection.deleteMany({});
+    }
+  });
 
   beforeAll(async () => {
     mongod = new MongoMemoryServer();
