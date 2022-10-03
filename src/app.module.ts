@@ -1,13 +1,18 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { DynamicModule, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { MongooseModule } from '@nestjs/mongoose';
 import { MongooseDatabaseModule } from './common/database/mongo/mongoose-database.module';
 // import { PostgresDatabaseModule } from './common/database/postgres/pg-database.module';
 import { AppRouteLoggerMiddleware } from './app-route-logger.middleware';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtIgnoreExpirationStrategy, JwtStrategy } from './authz/jwt.guard';
+import { InitialDataService } from './common/services/initial-data/initial-data.service';
+
+// mongo schemas
+import { User, UserSchema } from './common/database/schemas/users.schema';
 
 import configuration from './configurations';
 
@@ -23,13 +28,16 @@ const dbModules: any[] = [];
 //   dbModules.push(dbModule);
 // }
 
+const mongooseModules: DynamicModule[] = [];
 if (config?.db?.mongo?.activate) {
   const dbModule =
     process.env.NODE_ENV === 'test'
       ? // eslint-disable-next-line @typescript-eslint/no-var-requires
         require('./common/database/mongo/mongoose-database-test.module').rootMongooseTestModule()
       : MongooseDatabaseModule;
+
   dbModules.push(dbModule);
+  mongooseModules.push(MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]));
 }
 
 @Module({
@@ -38,6 +46,7 @@ if (config?.db?.mongo?.activate) {
       isGlobal: true,
       load: [configuration],
     }),
+    ...mongooseModules,
     ...dbModules,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
@@ -53,7 +62,7 @@ if (config?.db?.mongo?.activate) {
   ],
   controllers: [AppController],
   exports: [AppService, JwtStrategy, JwtIgnoreExpirationStrategy],
-  providers: [AppService, JwtStrategy, JwtIgnoreExpirationStrategy],
+  providers: [AppService, JwtStrategy, JwtIgnoreExpirationStrategy, InitialDataService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
