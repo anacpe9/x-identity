@@ -26,7 +26,8 @@ export class AuthzGuard implements CanActivate {
 
     const userPermissions = await this.authService.getUserData(userRole);
     const hasPermission = () =>
-      routePermissions.some((routePermission) =>
+      routePermissions.some(
+        (routePermission) =>
           // // userPermission.permissions.includes(routePermission),
           // userPermissions.userPermission.permissions.includes(routePermission),
           true,

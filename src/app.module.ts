@@ -13,6 +13,7 @@ import { InitialDataService } from './common/services/initial-data/initial-data.
 
 // mongo schemas
 import { User, UserSchema } from './common/database/schemas/users.schema';
+import { UsersService } from './users/users.service';
 
 import configuration from './configurations';
 
@@ -62,7 +63,7 @@ if (config?.db?.mongo?.activate) {
   ],
   controllers: [AppController],
   exports: [AppService, JwtStrategy, JwtIgnoreExpirationStrategy],
-  providers: [AppService, JwtStrategy, JwtIgnoreExpirationStrategy, InitialDataService],
+  providers: [AppService, JwtStrategy, JwtIgnoreExpirationStrategy, InitialDataService, UsersService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
