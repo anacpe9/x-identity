@@ -9,6 +9,6 @@ export class Constants {
   static APP_VERSION: string = version;
   static APP_NAME: string = name;
   static APP_DESCRIPTION: string = description;
-  static COOKIE_NAME: string = process.env.COOKIE_NAME || 'access-token';
-  static HEADER_NAME: string = process.env.HEADER_NAME || 'access-token';
+  static COOKIE_NAME: string = process.env.COOKIE_NAME || 'acl-token';
+  static HEADER_NAME: string = process.env.HEADER_NAME || 'acl-token';
 }

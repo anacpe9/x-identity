@@ -11,7 +11,16 @@ function setupSwagger(app: INestApplication) {
     .setTitle(Constants.APP_NAME)
     .setDescription(Constants.APP_DESCRIPTION)
     .setVersion(Constants.APP_VERSION)
-    .addBasicAuth();
+    // .addBasicAuth()
+    .addApiKey(
+      {
+        type: 'apiKey',
+        name: 'acl-token',
+        in: 'header',
+        description: 'authorized token from server',
+      },
+      'acl-token',
+    );
 
   const servers = process.env.SWAGGER_BASE_API ? [process.env.SWAGGER_BASE_API] : ['/', '/api', '/data'];
   servers.forEach((path) => documentBuilder.addServer(path));
@@ -25,7 +34,7 @@ function setupSwagger(app: INestApplication) {
       urls: [
         {
           url: '../swagger-ui-json',
-          description: 'Workplace Plus API Spec (json)',
+          description: 'x-identity API Spec (json)',
         },
       ],
     },
