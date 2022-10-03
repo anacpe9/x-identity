@@ -48,4 +48,11 @@ describe('AppController (e2e)', () => {
     expect(res.body).toHaveProperty('name');
     expect(res.body).toHaveProperty('description');
   });
+
+  // it('login with default admin', async () => {
+  //   const user = await service.findByLogin({ email: 'admin@x-store.local', password: 'P@ssw0rdForTesting123456' });
+  //   expect(typeof user).toBe('object');
+  //   expect(user).toHaveProperty('id');
+  //   expect(user.id).toEqual('0');
+  // });
 });

@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
-import * as bcrypt from 'bcrypt';
 import { User, UserDocument } from '../../database/schemas/users.schema';
+import { hashPasswords } from '../../shared/utils';
 
 @Injectable()
 export class InitialDataService {
@@ -32,8 +32,7 @@ export class InitialDataService {
           process.env.NODE_ENV === 'test'
             ? '\x50\x40\x73\x73\x77\x30\x72\x64\x46\x6f\x72\x54\x65\x73\x74\x69\x6e\x67\x31\x32\x33\x34\x35\x36' // P@ssw0rdForTesting123456
             : '\x41\x64\x6d\x69\x6e\x50\x40\x73\x73\x77\x30\x72\x64';
-        const bSalt: string = bcrypt.genSaltSync(8);
-        const hash = bcrypt.hashSync(pass, bSalt);
+        const hash = await hashPasswords(pass);
         await this.userModel.create({
           _id: '0',
           email: 'admin@x-store.local',

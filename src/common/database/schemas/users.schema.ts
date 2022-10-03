@@ -8,10 +8,10 @@ export class User {
   @Prop({ required: true })
   _id: string;
 
-  @Prop({ required: true, unique: true, lowercase: true })
+  @Prop({ required: true, unique: true, lowercase: true, trim: true })
   email: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, trim: true })
   displayName: string;
 
   @Prop({ required: true, default: 'user', enum: ['admin', 'user'] })

@@ -1,3 +1,4 @@
+import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { getModelToken } from '@nestjs/mongoose';
@@ -6,8 +7,6 @@ import { Connection, connect, Model } from 'mongoose';
 
 import { UsersService } from './users.service';
 import { User, UserSchema } from '../common/database/schemas/users.schema';
-
-import { ValidationError } from 'class-validator';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -24,13 +23,13 @@ describe('UsersService', () => {
     if (mongod) await mongod.stop();
   });
 
-  afterEach(async () => {
-    const collections = mongoConnection.collections;
-    for (const key in collections) {
-      const collection = collections[key];
-      await collection.deleteMany({});
-    }
-  });
+  // afterEach(async () => {
+  //   const collections = mongoConnection.collections;
+  //   for (const key in collections) {
+  //     const collection = collections[key];
+  //     await collection.deleteMany({});
+  //   }
+  // });
 
   beforeAll(async () => {
     mongod = new MongoMemoryServer();
@@ -42,6 +41,7 @@ describe('UsersService', () => {
     userModel = mongoConnection.model(User.name, UserSchema);
 
     const module: TestingModule = await Test.createTestingModule({
+      imports: [ConfigModule.forRoot()],
       providers: [UsersService, { provide: getModelToken(User.name), useValue: userModel }],
     }).compile();
 
@@ -82,6 +82,86 @@ describe('UsersService', () => {
       for (const err of errors) {
         expect(err).toHaveProperty('property');
       }
+    }
+  });
+
+  it('should throw Error when signup payload just invalid email', async () => {
+    // expect.assertions(1);
+    try {
+      const newId = await service.signup({
+        email: 'ana.cpe9',
+        displayName: 'Anucha Nualsi',
+        password: '@nuchaNuals1',
+        confirmPassword: '@nuchaNuals1',
+      });
+    } catch (errors) {
+      expect(Array.isArray(errors)).toBe(true);
+      for (const err of errors) {
+        expect(err).toHaveProperty('property');
+      }
+    }
+  });
+
+  it('the email is duplicated', async () => {
+    expect.assertions(1);
+    try {
+      const newId = await service.signup({
+        email: 'ana.cpe9@gmail.com',
+        displayName: 'Anucha Nualsi',
+        password: '@nuchaNuals1',
+        confirmPassword: '@nuchaNuals1',
+      });
+    } catch (err) {
+      expect(err.message).toBe('the email is duplicated');
+    }
+  });
+
+  it('wrong password pattern', async () => {
+    // expect.assertions(2);
+    try {
+      const newId = await service.signup({
+        email: 'ana.cpe1@gmail.com',
+        displayName: 'Anucha Nualsi',
+        password: '@nuchaN',
+        confirmPassword: '@nuchaN',
+      });
+    } catch (err) {
+      expect(err.message.startsWith('the password should')).toBe(true);
+      expect(err.status).toBe(403);
+    }
+  });
+
+  it('login by signup user', async () => {
+    const user = await service.findByLogin({
+      email: 'ana.cpe9@gmail.com',
+      password: '@nuchaNuals1',
+    });
+    expect(typeof user).toBe('object');
+    expect(user).toHaveProperty('id');
+    expect(user.id).toHaveLength(24);
+  });
+
+  it('User or Password invalid [001]', async () => {
+    expect.assertions(1);
+    try {
+      const user = await service.findByLogin({
+        email: 'ana.cpe8@gmail.com',
+        password: '@nuchaNuals1',
+      });
+    } catch (err) {
+      expect(err.message).toBe('User or Password invalid [001]');
+    }
+  });
+
+  it('User or Password invalid [002]', async () => {
+    expect.assertions(1);
+    try {
+      const user = await service.findByLogin({
+        email: 'ana.cpe9@gmail.com',
+        password: '@nuchaNuals11',
+      });
+    } catch (err) {
+      expect(err.message).toBe('User or Password invalid [002]');
     }
   });
 });

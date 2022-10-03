@@ -34,3 +34,27 @@ export class UserSignupDto {
   @ApiProperty({ description: 'Confirm Password' })
   confirmPassword: string;
 }
+
+export class UserDto {
+  @ApiProperty({ description: 'ID' })
+  id: string;
+
+  @ApiProperty({ description: 'Email' })
+  @IsNotEmpty()
+  @IsEmail()
+  @IsString({ message: 'username must be a string' })
+  email: string;
+
+  @ApiProperty({ description: 'Display name' })
+  @IsNotEmpty({ message: 'display name must be a string and not empty.' })
+  @IsString({ message: 'display name must be a string and not empty.' })
+  displayName: string;
+
+  @ApiProperty({ description: 'Role' })
+  @IsNotEmpty({ message: 'Role must be a string and not empty.' })
+  @IsString({ message: 'Role name must be a string and not empty.' })
+  role: string;
+
+  @ApiProperty({ description: 'Deleted' })
+  deleted: boolean;
+}
