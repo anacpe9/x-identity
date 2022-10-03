@@ -2,7 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { HelloVersionDto } from './app.dto';
 import { AppService } from './app.service';
-import { Authz } from './common/decorators/authz.decorator';
+import { AuthBasic } from './common/decorators/authz.decorator';
 
 @ApiTags('Application')
 @Controller()
@@ -16,7 +16,7 @@ export class AppController {
   }
 
   @Get('/auth')
-  @Authz()
+  @AuthBasic()
   @ApiResponse({ status: 200, type: HelloVersionDto })
   authHello() {
     return this.appService.getVersion();
