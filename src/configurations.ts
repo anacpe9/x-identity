@@ -33,7 +33,7 @@ export default () => {
       const cfgPth = _ensureConfigPath(cfg, key);
       const cfgAtr = attrib[attrib.length - 1];
 
-      cfgPth[cfgAtr] = process.env[kv[1]];
+      cfgPth[cfgAtr] = kv[1];
     }
 
     return cfg;
