@@ -47,7 +47,6 @@ Docker:Production Release:
     - docker info
     - TAG_VERSION=$(git describe --tags --abbrev=0)
     - rm ./src/config/setting.test.yaml
-    - rm ./src/config/setting.preview.yaml
     - rm ./src/config/setting.development.yaml
     - sed -i "s/%%PG_HOST%%/$PG_HOST/g"         ./src/config/setting.production.yaml
     - sed -i "s/%%PG_PORT%%/$PG_PORT/g"         ./src/config/setting.production.yaml
