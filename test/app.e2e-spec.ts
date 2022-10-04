@@ -204,7 +204,7 @@ describe('AppController (e2e)', () => {
     expect(res.body.message.startsWith('the email is duplicated')).toBe(true);
   });
 
-  it('POST /auth/signup - sign up with existed email, must failed', async () => {
+  it('POST /auth/signup - sign up with valid email, must success', async () => {
     const res = await request(httpServer)
       .post('/auth/signup')
       .set('Content-type', 'application/json')
@@ -217,6 +217,5 @@ describe('AppController (e2e)', () => {
       });
 
     expect(res.status).toEqual(201);
-    expect(res.text).toHaveLength(24);
   });
 });

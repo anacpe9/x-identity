@@ -16,12 +16,23 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'Success, Return The user id',
-    type: String,
+    schema: {
+      allOf: [
+        {
+          properties: {
+            id: {
+              description: 'User ID',
+              type: 'string',
+            },
+          },
+        },
+      ],
+    },
   })
   @Post('signup')
-  public async signup(@Body() userSignupDto: UserSignupDto): Promise<string> {
+  public async signup(@Body() userSignupDto: UserSignupDto): Promise<{ id: string }> {
     const newId = await this.userService.signup(userSignupDto);
-    return newId;
+    return { id: newId };
   }
 
   @ApiResponse({
