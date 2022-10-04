@@ -56,7 +56,7 @@ Docker:Production Release:
     - sed -i "s/%%PG_USERNAME%%/$PG_USERNAME/g" ./src/config/setting.production.yaml
     - sed -i "s/%%BASIC_USERNAME%%/$BASIC_USERNAME/g" ./src/config/setting.production.yaml
     - sed -i "s/%%BASIC_PASSWORD%%/$BASIC_PASSWORD/g" ./src/config/setting.production.yaml
-    - sed "s/%%BASE_IMAGE%%:%%BASE_IMAGE_VERSION%%/${BASE_IMAGE//\//\\/}:$BASE_IMAGE_VERSION/g" Dockerfile.template > Dockerfile
+    # - sed "s/%%BASE_IMAGE%%:%%BASE_IMAGE_VERSION%%/${BASE_IMAGE//\//\\/}:$BASE_IMAGE_VERSION/g" Dockerfile.template > Dockerfile
     - echo "$CI_BUILD_TOKEN" | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
     - >-
       docker build
