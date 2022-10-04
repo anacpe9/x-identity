@@ -5,7 +5,48 @@ variables:
   # DOCKER_HOST: tcp://localhost:2375
 
 stages:
+  - Test
   - DockerRelease
+
+Test:Unit Testing:
+  stage: Test
+  image: registry.gitlab.com/token-x/node:16-alpine-builder
+  only:
+    - main
+  cache: {}
+  script:
+    - NODE_ENV=development yarn install --frozen-lockfile
+    - npm run test
+
+Test:Integration:
+  stage: Test
+  image: registry.gitlab.com/token-x/node:16-alpine-builder
+  only:
+    - main
+  cache: {}
+  script:
+    - NODE_ENV=development yarn install --frozen-lockfile
+    - npm run test
+
+Test:UnitTesting:
+  stage: Test
+  image: registry.gitlab.com/token-x/node:16-alpine-builder
+  only:
+    - main
+  cache: {}
+  script:
+    - NODE_ENV=development yarn install --frozen-lockfile
+    - npm run test
+
+Coverage:Unit and Integration:
+  stage: Test
+  image: registry.gitlab.com/token-x/node:16-alpine-builder
+  only:
+    - main
+  cache: {}
+  script:
+    - NODE_ENV=development yarn install --frozen-lockfile
+    - npm run test:cov:all
 
 Docker:Build and Release:
   stage: DockerRelease
