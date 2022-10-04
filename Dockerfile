@@ -17,8 +17,8 @@ FROM registry.gitlab.com/token-x/node:16-alpine
 LABEL maintainer="Anucha Nualsi <ana.cpe9@gmail.com>"
 
 WORKDIR /app
-COPY --from=build /app/node_modules ./node_modules/
-COPY --from=build /app/dist ./
+COPY --from=builder /app/node_modules ./node_modules/
+COPY --from=builder /app/dist ./
 
 EXPOSE 3000
 CMD ["node", "main.js"]
