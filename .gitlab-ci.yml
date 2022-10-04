@@ -35,7 +35,7 @@ Docker:Production Release:
   stage: DockerRelease
   image: docker:git
   only:
-    - production
+    - release-*
   services:
     - docker:dind
   cache: {}
