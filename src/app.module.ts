@@ -14,6 +14,8 @@ import { InitialDataService } from './common/services/initial-data/initial-data.
 // mongo schemas
 import { User, UserSchema } from './common/database/schemas/users.schema';
 import { UsersService } from './users/users.service';
+import { AuthController } from './auth/auth.controller';
+import { AuthzService } from './authz/authz.service';
 
 import configuration from './configurations';
 
@@ -54,16 +56,25 @@ if (config?.db?.mongo?.activate) {
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        secretOrPrivateKey:
-          configService.get<string>('auth.jwt.algorithms') && configService.get<string>('auth.jwt.private_key')
-            ? Buffer.from(configService.get<string>('auth.jwt.private_key'), 'base64')
-            : configService.get<string>('auth.jwt.secret'),
+        // secret: configService.get<string>('auth.jwt.secret'),
+        publicKey: Buffer.from(configService.get<string>('auth.jwt.public_key'), 'base64'),
+        privateKey: Buffer.from(configService.get<string>('auth.jwt.private_key'), 'base64'),
+        signOptions: {
+          algorithm:
+            configService.get<string>('auth.jwt.algorithms') === 'ES256'
+              ? 'ES256'
+              : configService.get<string>('auth.jwt.algorithms') === 'ES384'
+              ? 'ES384'
+              : configService.get<string>('auth.jwt.algorithms') === 'ES512'
+              ? 'ES512'
+              : 'RS256',
+        },
       }),
     }),
   ],
-  controllers: [AppController],
-  exports: [AppService, JwtStrategy, JwtIgnoreExpirationStrategy],
-  providers: [AppService, JwtStrategy, JwtIgnoreExpirationStrategy, InitialDataService, UsersService],
+  controllers: [AppController, AuthController],
+  exports: [AppService, JwtStrategy, JwtIgnoreExpirationStrategy, AuthzService],
+  providers: [AppService, JwtStrategy, JwtIgnoreExpirationStrategy, InitialDataService, UsersService, AuthzService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

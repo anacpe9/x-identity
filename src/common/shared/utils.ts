@@ -10,3 +10,5 @@ export const hashPasswords = async (userPassword) => {
 
   return hash;
 };
+
+export const delay = (ms) => new Promise((res) => setTimeout(res, ms));

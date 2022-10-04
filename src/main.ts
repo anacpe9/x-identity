@@ -1,3 +1,4 @@
+import { ErrorFilter } from './common/filters/error.filter';
 import { Logger, INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
@@ -55,6 +56,7 @@ async function bootstrap() {
   // app.useGlobalFilters(new ErrorsFilter());
   app.disable('x-powered-by');
   app.enableShutdownHooks();
+  app.useGlobalFilters(new ErrorFilter());
 
   const configService = app.get(ConfigService);
   const port = configService.get<number>('http.port') || 3000;

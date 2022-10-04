@@ -10,29 +10,18 @@ export class AuthzGuard implements CanActivate {
   async canActivate(
     context: ExecutionContext,
     // ): boolean | Promise<any> | Observable<boolean> {
-  ): Promise<any> {
-    const routePermissions = this.reflector.get<string[]>(
-      'roles', // 'permissions',
-      context.getHandler(),
-    );
+  ): Promise<boolean> {
+    const roles = this.reflector.get<string[]>('roles', context.getHandler());
 
-    //
-    if (!routePermissions || routePermissions.length === 0) {
+    // just authenticated,
+    if (!roles || roles.length === 0) {
       return true;
     }
 
-    const userRole = context.getArgs()[0].user;
-    if (!userRole) return false;
+    const user = context.getArgs()[0].user;
+    if (!user) return false;
 
-    const userPermissions = await this.authService.getUserData(userRole);
-    const hasPermission = () =>
-      routePermissions.some(
-        (routePermission) =>
-          // // userPermission.permissions.includes(routePermission),
-          // userPermissions.userPermission.permissions.includes(routePermission),
-          true,
-      );
-    return hasPermission();
+    return roles.some((role) => role === user.role);
   }
 }
 

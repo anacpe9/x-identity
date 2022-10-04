@@ -15,10 +15,10 @@ const headerName = Constants.HEADER_NAME;
 
 function genJwtConfig(configService: ConfigService<Record<string, unknown>, false>, baseOpt: Record<string, any>) {
   if (configService.get<string>('auth.jwt.algorithms') && configService.get<string>('auth.jwt.public_key')) {
-    baseOpt.secretOrKey = [configService.get<string>('auth.jwt.public_key')];
+    baseOpt.secretOrKey = Buffer.from(configService.get<string>('auth.jwt.public_key'), 'base64');
     baseOpt.algorithms = [configService.get<string>('auth.jwt.algorithms')]; // RS256, ES384, ES512
   } else {
-    baseOpt.secretOrKey = [configService.get<string>('auth.jwt.secret')];
+    baseOpt.secret = configService.get<string>('auth.jwt.secret');
   }
   return baseOpt;
 }

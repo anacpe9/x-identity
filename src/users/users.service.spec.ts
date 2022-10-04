@@ -8,6 +8,9 @@ import { Connection, connect, Model } from 'mongoose';
 import { UsersService } from './users.service';
 import { User, UserSchema } from '../common/database/schemas/users.schema';
 
+import configuration from '../configurations';
+// const config = configuration();
+
 describe('UsersService', () => {
   let service: UsersService;
   let mongod: MongoMemoryServer;
@@ -41,7 +44,12 @@ describe('UsersService', () => {
     userModel = mongoConnection.model(User.name, UserSchema);
 
     const module: TestingModule = await Test.createTestingModule({
-      imports: [ConfigModule.forRoot()],
+      imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [configuration],
+        }),
+      ],
       providers: [UsersService, { provide: getModelToken(User.name), useValue: userModel }],
     }).compile();
 
@@ -126,8 +134,8 @@ describe('UsersService', () => {
         confirmPassword: '@nuchaN',
       });
     } catch (err) {
+      expect(err.status).toBe(400);
       expect(err.message.startsWith('the password should')).toBe(true);
-      expect(err.status).toBe(403);
     }
   });
 

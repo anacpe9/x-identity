@@ -18,7 +18,7 @@ export class UsersService {
     private readonly configService: ConfigService,
   ) {}
 
-  async findByLogin({ email, password }: UserLoginDto) {
+  async findByLogin({ email, password }: UserLoginDto): Promise<UserDto> {
     const user: any = await this.userModel.findOne({ email: email }).lean();
 
     if (!user) {
@@ -36,10 +36,10 @@ export class UsersService {
       displayName: user.displayName,
       role: user.role,
       deleted: user.deleted,
-    } as UserDto;
+    };
   }
 
-  async signup(payload: UserSignupDto) {
+  async signup(payload: UserSignupDto): Promise<string> {
     const nw = plainToClass(UserSignupDto, payload);
     await validateOrReject(nw, {
       // whitelist: true,

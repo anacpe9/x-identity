@@ -1,27 +1,27 @@
+import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
 import { JwtService, JwtSignOptions, JwtVerifyOptions } from '@nestjs/jwt';
-import { InjectModel } from '@nestjs/mongoose';
-import * as mongoose from 'mongoose';
+import { Algorithm } from 'jsonwebtoken';
+import { JwtPayload } from './authz.dto';
 
 @Injectable()
 export class AuthzService {
+  private readonly algorithm: Algorithm;
   constructor(
-    // private usersService: UsersService,
-    private jwtService: JwtService,
-  ) {}
+    // private readonly usersService: UsersService,
+    private readonly configService: ConfigService,
+    private readonly jwtService: JwtService,
+  ) {
+    this.algorithm = this.configService.get<Algorithm>('auth.jwt.algorithms');
+  }
 
-  async sign(user: any, options?: Partial<JwtSignOptions>): Promise<string> {
+  async sign(user: JwtPayload, options: Partial<JwtSignOptions>): Promise<string> {
+    options.issuer = 'x-id';
+    // options.algorithm = this.algorithm;
     return await this.jwtService.signAsync(user, options);
   }
 
-  async verify(user: any, options?: Partial<JwtVerifyOptions>): Promise<any> {
-    return await this.jwtService.verifyAsync(user, options);
-  }
-
-  async getUserData(user: any) {
-    return {
-      user: {},
-      role: 'user',
-    };
-  }
+  // async verify(user: any, options?: Partial<JwtVerifyOptions>): Promise<any> {
+  //   return await this.jwtService.verifyAsync(user, options);
+  // }
 }
